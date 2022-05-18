@@ -1,5 +1,6 @@
 package com.example.smartshopping;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,11 +8,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TimePicker;
+import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Locale;
 
@@ -38,12 +47,19 @@ public class ShopDetailsActivity extends AppCompatActivity {
 
     private int checkedID = -1;
 
+    private FirebaseDatabase firebaseDatabase;
+    private DatabaseReference databaseReference;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shop_details);
 
         Intent intent = getIntent();
+
+        shopName = findViewById(R.id.shop_name);
+        ownerName = findViewById(R.id.owner_name);
+
         weekDaysOpens = findViewById(R.id.week_days_opens);
         weekDaysClosed = findViewById(R.id.week_days_closed);
         weekEndsOpens = findViewById(R.id.week_ends_opens);
@@ -100,10 +116,47 @@ public class ShopDetailsActivity extends AppCompatActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                saveShopDetails();
+                
                 if (intent.hasExtra("login")) {
                     startActivity(new Intent(ShopDetailsActivity.this, MainActivity.class));
                 }
                 finish();
+            }
+        });
+
+    }
+
+    private void saveShopDetails() {
+
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference("shops");
+
+        ShopDetailsModel item = new ShopDetailsModel(shopName.getText().toString().trim()
+                                        , ownerName.getText().toString().trim()
+                                        , weekDaysOpens.getText().toString().trim()
+                                        , weekDaysClosed.getText().toString().trim()
+                                        , weekEndsOpens.getText().toString().trim()
+                                        , weekEndsClosed.getText().toString().trim()
+                                        , category.getText().toString().trim()
+                                        , location.getText().toString().trim()
+                                        , address.getText().toString().trim()
+        );
+
+        SharedPreferences loginPreferences = getSharedPreferences(getString(R.string.login_preference), MODE_MULTI_PROCESS);
+        String phoneNumber = loginPreferences.getString(getString(R.string.phone_preference), null);
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                databaseReference.child(phoneNumber).child("shopDetails").setValue(item);
+                Toast.makeText(ShopDetailsActivity.this, "Shop Details Added", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(ShopDetailsActivity.this, "Something went wrong.", Toast.LENGTH_SHORT).show();
             }
         });
 
