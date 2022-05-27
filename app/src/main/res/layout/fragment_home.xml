@@ -3,9 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".HomeFragment">
+    tools:context=".fragment.HomeFragment">
 
     <androidx.recyclerview.widget.RecyclerView
+        android:clipToPadding="false"
+        android:paddingBottom="16dp"
         android:id="@+id/items_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
@@ -13,6 +15,7 @@
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:text="@string/add_item"
         android:textAllCaps="false"
+        android:fontFamily="sans-serif-black"
         android:backgroundTint="@color/dark_blue"
         android:id="@+id/home_add_item"
         android:textColor="@color/white"

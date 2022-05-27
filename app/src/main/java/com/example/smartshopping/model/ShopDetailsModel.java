@@ -1,4 +1,4 @@
-package com.example.smartshopping;
+package com.example.smartshopping.model;
 
 public class ShopDetailsModel {
 
@@ -13,6 +13,8 @@ public class ShopDetailsModel {
     String category;
     String location;
     String address;
+
+    ShopDetailsModel(){}
 
     public ShopDetailsModel(String shopName, String ownerName, String weekDaysOpens, String weekDaysClosed, String weekEndsOpens, String weekEndsClosed, String category, String location, String address) {
         this.shopName = shopName;

@@ -1,4 +1,4 @@
-package com.example.smartshopping;
+package com.example.smartshopping.model;
 
 import android.net.Uri;
 
@@ -10,6 +10,8 @@ public class ItemModel {
     Double price;
     Double quantity;
     String brand;
+
+    ItemModel(){}
 
     public ItemModel(Uri imageUri, String name, Double price, Double quantity, String brand) {
         this.imageUri = imageUri;

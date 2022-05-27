@@ -6,16 +6,24 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
+import com.example.smartshopping.model.ItemModel;
+import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 
-    Context context;
+public class ItemAdapter extends FirebaseRecyclerAdapter<ItemModel, ItemAdapter.ViewHolder> {
 
-    public ItemAdapter(Context context) {
-        this.context = context;
+    public ItemAdapter(@NonNull FirebaseRecyclerOptions<ItemModel> options) {
+        super(options);
+    }
+
+    @Override
+    protected void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull ItemModel model) {
+        holder.bind(model);
     }
 
     @NonNull
@@ -24,38 +32,38 @@ public class ItemAdapter extends RecyclerView.Adapter<ItemAdapter.ViewHolder> {
 
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.activity_add_item, parent);
+        View view = inflater.inflate(R.layout.shop_items, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
         return viewHolder;
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        holder.bind(position);
-    }
-
-    @Override
-    public int getItemCount() {
-        return 0;
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
         ImageView itemImage;
 
-        EditText itemName;
-        EditText itemPrice;
-        EditText itemQuantity;
-        EditText itemBrand;
+        TextView itemName;
+        TextView itemPrice;
+        TextView itemQuantity;
+        TextView itemBrand;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            itemImage = itemView.findViewById(R.id.add_item_image);
+            itemImage = itemView.findViewById(R.id.item_image);
+
+            itemName = itemView.findViewById(R.id.item_name);
+            itemPrice = itemView.findViewById(R.id.item_price);
+            itemQuantity = itemView.findViewById(R.id.item_quantity);
+            itemBrand = itemView.findViewById(R.id.item_brand);
 
         }
 
-        public void bind(int position) {
+        public void bind(ItemModel item) {
+
+            itemName.setText(item.getName());
+            itemPrice.setText("Rs : " + item.getPrice());
+            itemQuantity.setText(item.getQuantity() + " Kgs");
+            itemBrand.setText("Brand : " + item.getBrand());
         }
     }
 }
