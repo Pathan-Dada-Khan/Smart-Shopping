@@ -4,9 +4,11 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
@@ -28,9 +30,18 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import static android.app.Activity.RESULT_OK;
 import static android.content.Context.MODE_MULTI_PROCESS;
 
 public class ProfileFragment extends Fragment {
+
+    private static final int SHOP_IMAGE_PICKER = 200;
+    private static final int OWNER_IMAGE_PICKER = 100;
+
+    private Uri ownerImageUri = null;
+    private Uri shopImageUri = null;
+
+    String phone = null;
 
     ImageView shopImage;
     ImageView ownerImage;
@@ -93,6 +104,20 @@ public class ProfileFragment extends Fragment {
         editProfile = view.findViewById(R.id.edit_profile);
         logout = view.findViewById(R.id.logout);
 
+        shopImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getShopImage();
+            }
+        });
+
+        ownerImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getOwnerImage();
+            }
+        });
+
         editProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -108,9 +133,9 @@ public class ProfileFragment extends Fragment {
         });
 
         SharedPreferences loginPreferences = getContext().getSharedPreferences(getString(R.string.login_preference), MODE_MULTI_PROCESS);
-        String phone = loginPreferences.getString(getString(R.string.phone_number), null);
+        phone = loginPreferences.getString(getString(R.string.phone_preference), null);
 
-        String PATH = "shops/" + phone + "/shopDetails";
+        String PATH = "shops/" + phone + "/shopDetails/";
 
         databaseReference = FirebaseDatabase.getInstance().getReference(PATH);
 
@@ -119,7 +144,52 @@ public class ProfileFragment extends Fragment {
         return view;
     }
 
+    private void getOwnerImage() {
+
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(intent, OWNER_IMAGE_PICKER);
+    }
+
+    private void getShopImage() {
+
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(intent, SHOP_IMAGE_PICKER);
+    }
+
     private void getFirebaseData() {
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                ShopDetailsModel model = snapshot.getValue(ShopDetailsModel.class);
+
+                if(model != null) {
+
+                    shopName.setText(model.getShopName());
+                    ownerName.setText(model.getOwnerName());
+
+                    phoneNumber.setText(phone);
+
+                    weekDaysOpens.setText(model.getWeekDaysOpens());
+                    weekDaysClosed.setText(model.getWeekDaysClosed());
+                    weekEndsOpens.setText(model.getWeekEndsOpens());
+                    weekEndsClosed.setText(model.getWeekEndsClosed());
+
+                    category.setText(model.getCategory());
+                    address.setText(model.getAddress());
+
+                    location.setText(model.getLocation());
+                    locationAddress.setText(model.getAddress());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
     }
 
@@ -149,5 +219,19 @@ public class ProfileFragment extends Fragment {
 
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == OWNER_IMAGE_PICKER && resultCode == RESULT_OK) {
+            ownerImageUri =  data.getData();
+            ownerImage.setImageURI(ownerImageUri);
+        } else if(requestCode == SHOP_IMAGE_PICKER && resultCode == RESULT_OK) {
+            shopImageUri = data.getData();
+            shopImage.setImageURI(shopImageUri);
+        }
+
     }
 }
