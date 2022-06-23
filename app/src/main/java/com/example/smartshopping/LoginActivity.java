@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.AuthResult;
@@ -31,10 +32,12 @@ import java.util.concurrent.TimeUnit;
 
 public class LoginActivity extends AppCompatActivity {
 
+    TextView tabItemName;
+
     EditText phone;
     EditText otp;
-    CardView cardView;
     TextView message;
+    CardView cardView;
     TextView cardText;
     ProgressBar cardProgress;
 
@@ -52,12 +55,38 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
+        tabItemName = findViewById(R.id.tab_item_name);
+
         phone = findViewById(R.id.phone_number);
         otp = findViewById(R.id.otp);
-        cardView = findViewById(R.id.card_view);
         message = findViewById(R.id.message);
+        cardView = findViewById(R.id.card_view);
         cardText = findViewById(R.id.card_text);
         cardProgress = findViewById(R.id.card_progress);
+
+        TabLayout loginTab = findViewById(R.id.login_tab);
+
+        loginTab.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if(tab.getPosition() == 0) {
+                    tabItemName.setText("ShopKeeper");
+                } else if(tab.getPosition() == 1) {
+                    tabItemName.setText("Customer");
+                }
+
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
 
         phone.addTextChangedListener(new TextWatcher() {
             @Override
@@ -83,7 +112,7 @@ public class LoginActivity extends AppCompatActivity {
                 String phoneNumber = phone.getText().toString();
 
                 if(phoneNumber.length() != 10){
-                    message.setText("Enter a Valid Phone Number");
+                    message.setText(" Enter a Valid Phone Number");
                     return;
                 }
 
@@ -101,8 +130,8 @@ public class LoginActivity extends AppCompatActivity {
                             .build();
                     PhoneAuthProvider.verifyPhoneNumber(options);
 
-                    message.setText("OTP Sent Successfully");
 
+                    message.setText(" OTP Sent Successfully");
                     cardText.setText(getString(R.string.submit));
                     cardText.setVisibility(View.INVISIBLE);
                     cardProgress.setVisibility(View.VISIBLE);
@@ -112,12 +141,12 @@ public class LoginActivity extends AppCompatActivity {
 
                 } else {
                     if(otp.length() != 6){
-                        message.setText("Invalid OTP");
+                        message.setText(" Invalid OTP");
                         return;
                     }
 
                     if(phone.length() != 10){
-                        message.setText("Invalid Phone Number");
+                        message.setText(" Invalid Phone Number");
                         return;
                     }
 
@@ -149,9 +178,9 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onVerificationFailed(FirebaseException e) {
                 if (e instanceof FirebaseAuthInvalidCredentialsException) {
-                    message.setText("Invalid Phone Number");
+                    message.setText(" Invalid Phone Number");
                 } else if (e instanceof FirebaseTooManyRequestsException) {
-                    message.setText("Sorry, OTP Limit Exceeded. Come Back Tomorrow");
+                    message.setText(" Sorry, OTP Limit Exceeded. Come Back Tomorrow");
                 } else {
                     Toast.makeText(LoginActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
@@ -167,6 +196,7 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences loginPreferences = getSharedPreferences(getString(R.string.login_preference), MODE_MULTI_PROCESS);
         SharedPreferences.Editor editor = loginPreferences.edit();
         editor.putString(getString(R.string.phone_preference), phone.getText().toString());
+        editor.putString("user", tabItemName.getText().toString());
         editor.apply();
         Intent intent = new Intent(LoginActivity.this, ShopDetailsActivity.class);
         intent.putExtra("login", "login");
@@ -183,7 +213,7 @@ public class LoginActivity extends AppCompatActivity {
                             submitPhoneNumber();
                         } else {
                             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
-                                message.setText("Invalid Verification Code");
+                                message.setText(" Invalid Verification Code");
                             }
                         }
                     }
