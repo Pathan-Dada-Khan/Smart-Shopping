@@ -135,7 +135,7 @@ public class ProfileFragment extends Fragment {
         SharedPreferences loginPreferences = getContext().getSharedPreferences(getString(R.string.login_preference), MODE_MULTI_PROCESS);
         phone = loginPreferences.getString(getString(R.string.phone_preference), null);
 
-        String PATH = "shops/" + phone + "/shopDetails/";
+        String PATH = "smart-shops/shops/" + phone +"/";
 
         databaseReference = FirebaseDatabase.getInstance().getReference(PATH);
 

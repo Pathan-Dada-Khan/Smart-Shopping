@@ -12,18 +12,22 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smartshopping.R;
-import com.example.smartshopping.model.ShopModel;
+import com.example.smartshopping.model.ShopDetailsModel;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 
-public class ShopAdapter extends FirebaseRecyclerAdapter<ShopModel, ShopAdapter.ViewHolder> {
+public class ShopAdapter extends FirebaseRecyclerAdapter<ShopDetailsModel, ShopAdapter.ViewHolder> {
 
-    public ShopAdapter(@NonNull FirebaseRecyclerOptions<ShopModel> options) {
+    interface ShopItemClick {
+        void itemClick(String phoneNumber);
+    }
+
+    public ShopAdapter(@NonNull FirebaseRecyclerOptions<ShopDetailsModel> options) {
         super(options);
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull ShopModel model) {
+    protected void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull ShopDetailsModel model) {
         holder.bind(model);
     }
 
@@ -40,7 +44,7 @@ public class ShopAdapter extends FirebaseRecyclerAdapter<ShopModel, ShopAdapter.
         return viewHolder;
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         ImageView shopImage;
         ImageView ownerImage;
@@ -60,17 +64,22 @@ public class ShopAdapter extends FirebaseRecyclerAdapter<ShopModel, ShopAdapter.
 
             shopName = itemView.findViewById(R.id.shop_list_shop_name);
             address = itemView.findViewById(R.id.shop_list_address);
-            rating = itemView.findViewById(R.id.shop_list_rating_bar);
+            rating = itemView.findViewById(R.id.shop_list_rating);
             numberOfRating = itemView.findViewById(R.id.shop_list_number_of_ratings);
 
             ratingBar = itemView.findViewById(R.id.shop_list_rating_bar);
 
         }
 
-        public void bind(ShopModel model) {
+        public void bind(ShopDetailsModel model) {
 
             shopName.setText(model.getShopName());
             address.setText(model.getAddress());
+
+        }
+
+        @Override
+        public void onClick(View view) {
 
         }
     }

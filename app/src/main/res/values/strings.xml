@@ -39,7 +39,9 @@
     <string name="quantity">Quantity</string>
     <string name="brand">Brand</string>
     <string name="login_to_continue">Please login to continue</string>
-    <string name="shopkeeper">Shop Keeper</string>
+    <string name="shopkeeper">ShopKeeper</string>
     <string name="customer">Customer</string>
     <string name="rupee">\u20B9</string>
+    <string name="user_type">User Type</string>
+    <string name="guest">Guest</string>
 </resources>

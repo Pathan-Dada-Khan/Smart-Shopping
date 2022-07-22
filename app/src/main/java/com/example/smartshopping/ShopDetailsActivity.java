@@ -121,7 +121,7 @@ public class ShopDetailsActivity extends AppCompatActivity {
                 saveShopDetails();
                 
                 if (intent.hasExtra("login")) {
-                    startActivity(new Intent(ShopDetailsActivity.this, MainActivity.class));
+                    startActivity(new Intent(ShopDetailsActivity.this, ShopKeeperActivity.class));
                 }
                 finish();
             }
@@ -132,7 +132,7 @@ public class ShopDetailsActivity extends AppCompatActivity {
     private void saveShopDetails() {
 
         firebaseDatabase = FirebaseDatabase.getInstance();
-        databaseReference = firebaseDatabase.getReference("shops");
+        databaseReference = firebaseDatabase.getReference("smart-shops/shops");
 
         ShopDetailsModel item = new ShopDetailsModel(shopName.getText().toString().trim()
                                         , ownerName.getText().toString().trim()
@@ -151,7 +151,7 @@ public class ShopDetailsActivity extends AppCompatActivity {
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                databaseReference.child(phoneNumber).child("shopDetails").setValue(item);
+                databaseReference.child(phoneNumber).setValue(item);
                 Toast.makeText(ShopDetailsActivity.this, "Shop Details Added", Toast.LENGTH_SHORT).show();
             }
 

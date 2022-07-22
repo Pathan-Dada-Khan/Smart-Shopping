@@ -41,6 +41,8 @@ public class LoginActivity extends AppCompatActivity {
     TextView cardText;
     ProgressBar cardProgress;
 
+    TextView guestLogin;
+
     PhoneAuthOptions options;
     PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks;
 
@@ -48,10 +50,36 @@ public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
 
+    SharedPreferences loginPreferences;
+    String phoneNumber;
+    String userType;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.Theme_SmartShopping);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        loginPreferences = getSharedPreferences(getString(R.string.login_preference), MODE_MULTI_PROCESS);
+        phoneNumber = loginPreferences.getString(getString(R.string.phone_preference), null);
+        userType = loginPreferences.getString(getString(R.string.user_type), null);
+
+        if(phoneNumber != null) {
+
+            if(getString(R.string.customer).equals(userType)) {
+                startActivity(new Intent(this, CustomerActivity.class));
+            } else if(getString(R.string.shopkeeper).equals(userType)) {
+                startActivity(new Intent(this, ShopKeeperActivity.class));
+            }
+
+        } else {
+            if(userType != null) {
+                if(getString(R.string.guest).equals(userType)) {
+                    startActivity(new Intent(this, CustomerActivity.class));
+                }
+            }
+        }
+
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -63,6 +91,19 @@ public class LoginActivity extends AppCompatActivity {
         cardView = findViewById(R.id.card_view);
         cardText = findViewById(R.id.card_text);
         cardProgress = findViewById(R.id.card_progress);
+        guestLogin = findViewById(R.id.guest_login);
+
+        guestLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences loginPreferences = getSharedPreferences(getString(R.string.login_preference), MODE_MULTI_PROCESS);
+                SharedPreferences.Editor editor = loginPreferences.edit();
+                editor.putString(getString(R.string.user_type), getString(R.string.guest));
+                editor.apply();
+                startActivity(new Intent(LoginActivity.this, CustomerActivity.class));
+                finish();
+            }
+        });
 
         TabLayout loginTab = findViewById(R.id.login_tab);
 
@@ -70,9 +111,9 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 if(tab.getPosition() == 0) {
-                    tabItemName.setText("ShopKeeper");
+                    tabItemName.setText(getString(R.string.shopkeeper));
                 } else if(tab.getPosition() == 1) {
-                    tabItemName.setText("Customer");
+                    tabItemName.setText(getString(R.string.customer));
                 }
 
             }
@@ -121,6 +162,11 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 if(getString(R.string.generate_otp).equals(cardText.getText().toString())){
+
+                    SharedPreferences loginPreferences = getSharedPreferences(getString(R.string.login_preference), MODE_MULTI_PROCESS);
+                    SharedPreferences.Editor editor = loginPreferences.edit();
+                    editor.putString(getString(R.string.user_type), tabItemName.getText().toString());
+                    editor.apply();
 
                     options = PhoneAuthOptions.newBuilder(mAuth)
                             .setPhoneNumber("+91" + phoneNumber)
@@ -196,11 +242,16 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences loginPreferences = getSharedPreferences(getString(R.string.login_preference), MODE_MULTI_PROCESS);
         SharedPreferences.Editor editor = loginPreferences.edit();
         editor.putString(getString(R.string.phone_preference), phone.getText().toString());
-        editor.putString("user", tabItemName.getText().toString());
         editor.apply();
-        Intent intent = new Intent(LoginActivity.this, ShopDetailsActivity.class);
-        intent.putExtra("login", "login");
-        startActivity(intent);
+
+        if(tabItemName.getText().toString().equals(getString(R.string.shopkeeper))) {
+            Intent intent = new Intent(this, ShopDetailsActivity.class);
+            intent.putExtra("login", "login");
+            startActivity(intent);
+        } else if(tabItemName.getText().toString().equals(getString(R.string.customer))) {
+            startActivity(new Intent(this, CustomerActivity.class));
+        }
+
         finish();
     }
 

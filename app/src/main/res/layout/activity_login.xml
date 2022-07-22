@@ -31,6 +31,7 @@
                 android:layout_height="wrap_content"/>
 
             <TextView
+                android:id="@+id/guest_login"
                 android:textStyle="bold"
                 android:text=" Click here"
                 android:textColor="@color/orange"

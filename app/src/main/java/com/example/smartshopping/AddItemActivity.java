@@ -53,18 +53,19 @@ public class AddItemActivity extends AppCompatActivity {
 
     private void addItem() {
 
-        databaseReference = FirebaseDatabase.getInstance().getReference("shops");
+        databaseReference = FirebaseDatabase.getInstance().getReference("smart-shops");
 
         SharedPreferences loginPreferences = getSharedPreferences(getString(R.string.login_preference), MODE_MULTI_PROCESS);
         String phoneNumber = loginPreferences.getString(getString(R.string.phone_preference), null);
 
         ItemModel items = new ItemModel(null
+                                        , phoneNumber
                                         , itemName.getText().toString().trim()
                                         , Double.parseDouble(itemPrice.getText().toString().trim())
                                         , Double.parseDouble(itemQuantity.getText().toString().trim())
                                         , itemBrand.getText().toString().trim());
 
-        DatabaseReference childReference = databaseReference.child(phoneNumber).child("items").push();
+        DatabaseReference childReference = databaseReference.child("items").push();
         childReference.setValue(items);
 
         Toast.makeText(AddItemActivity.this, "Items Added Successfully", Toast.LENGTH_SHORT).show();

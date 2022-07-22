@@ -3,6 +3,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:scrollbars="none"
     android:layout_height="wrap_content"
     tools:context=".fragment.ProfileFragment">
 
@@ -52,7 +53,7 @@
                     android:layout_marginTop="16dp"
                     android:fontFamily="sans-serif-black"
                     android:text="@string/shop_name"
-                    android:textAppearance="?android:textAppearanceMedium" />
+                    android:textAppearance="?android:textAppearanceSmall" />
 
                 <TextView
                     android:id="@+id/profile_owner_name"

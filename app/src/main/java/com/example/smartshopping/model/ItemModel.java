@@ -6,6 +6,7 @@ public class ItemModel {
 
     Uri imageUri;
 
+    String phoneNumber;
     String name;
     Double price;
     Double quantity;
@@ -13,8 +14,9 @@ public class ItemModel {
 
     ItemModel(){}
 
-    public ItemModel(Uri imageUri, String name, Double price, Double quantity, String brand) {
+    public ItemModel(Uri imageUri, String phoneNumber, String name, Double price, Double quantity, String brand) {
         this.imageUri = imageUri;
+        this.phoneNumber = phoneNumber;
         this.name = name;
         this.price = price;
         this.quantity = quantity;
@@ -23,6 +25,10 @@ public class ItemModel {
 
     public Uri getImageUri() {
         return imageUri;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 
     public String getName() {
